@@ -8,9 +8,7 @@ const envSchema = z.object({
 
   PORT: z.coerce.number().int().positive().default(4000),
 
-  DATABASE_URL: z
-    .string()
-    .min(1, "DATABASE_URL is required"),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 
   JWT_SECRET: z
     .string()
@@ -21,6 +19,12 @@ const envSchema = z.object({
   LLM_MODEL: z.string().optional(),
 
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+  SUPABASE_URL: z.string().url("SUPABASE_URL must be a valid URL"),
+
+  SUPABASE_SERVICE_ROLE_KEY: z
+    .string()
+    .min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -28,9 +32,7 @@ const parsedEnv = envSchema.safeParse(process.env);
 if (!parsedEnv.success) {
   console.error("Invalid environment configuration:");
 
-  console.error(
-    z.prettifyError(parsedEnv.error),
-  );
+  console.error(z.prettifyError(parsedEnv.error));
 
   process.exit(1);
 }

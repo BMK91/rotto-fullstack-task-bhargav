@@ -10,9 +10,13 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/db/seed/seed.ts",
+    "db:seed:auth": "tsx src/db/seed/seed-auth-runner.ts",
+    "db:seed:candidates": "tsx src/db/seed/seed-candidates-runner.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^18.0.6",

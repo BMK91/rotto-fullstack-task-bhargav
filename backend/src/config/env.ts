@@ -8,6 +8,8 @@ const envSchema = z.object({
 
   PORT: z.coerce.number().int().positive().default(4000),
 
+  API_PREFIX: z.string().default("/api/v1"),
+
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 
   JWT_SECRET: z
@@ -25,6 +27,8 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z
     .string()
     .min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
+
+  SUPABASE_ANON_KEY: z.string().min(1, "SUPABASE_ANON_KEY is required"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

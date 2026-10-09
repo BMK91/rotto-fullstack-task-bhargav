@@ -2,7 +2,9 @@ import cors from "cors";
 import { sql } from "drizzle-orm";
 import express from "express";
 
+import { env } from "./config/env.js";
 import { db } from "./db/client.js";
+import routes from "./routes/index.js";
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use(env.API_PREFIX, routes);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({

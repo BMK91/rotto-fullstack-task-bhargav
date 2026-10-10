@@ -1,15 +1,19 @@
 import { eq } from "drizzle-orm";
 import type { NextFunction, Request, Response } from "express";
 
+import { HTTP_STATUS } from "@/constants/http-status.js";
 import { db } from "@/db/client.js";
+import { companies } from "@/db/schema/companies.js";
 import { recruiters } from "@/db/schema/recruiters.js";
 import { supabaseAdmin } from "@/lib/supabase/admin.js";
+import { sendError } from "@/utils/send-error.js";
 
 export interface AuthenticatedRecruiter {
   id: string;
   authUserId: string;
   email: string;
   companyId: string;
+  companyName: string;
 }
 
 declare global {
@@ -29,8 +33,8 @@ export async function authenticate(
     const authorization = req.headers.authorization;
 
     if (!authorization?.startsWith("Bearer ")) {
-      res.status(401).json({
-        success: false,
+      sendError(res, {
+        statusCode: HTTP_STATUS.UNAUTHORIZED,
         message: "Authentication required",
         code: "UNAUTHORIZED",
       });
@@ -40,8 +44,8 @@ export async function authenticate(
     const token = authorization.slice("Bearer ".length).trim();
 
     if (!token) {
-      res.status(401).json({
-        success: false,
+      sendError(res, {
+        statusCode: HTTP_STATUS.UNAUTHORIZED,
         message: "Authentication required",
         code: "UNAUTHORIZED",
       });
@@ -54,8 +58,8 @@ export async function authenticate(
     } = await supabaseAdmin.auth.getUser(token);
 
     if (error || !user) {
-      res.status(401).json({
-        success: false,
+      sendError(res, {
+        statusCode: HTTP_STATUS.UNAUTHORIZED,
         message: "Invalid or expired access token",
         code: "UNAUTHORIZED",
       });
@@ -68,14 +72,16 @@ export async function authenticate(
         authUserId: recruiters.authUserId,
         email: recruiters.email,
         companyId: recruiters.companyId,
+        companyName: companies.name,
       })
       .from(recruiters)
+      .innerJoin(companies, eq(recruiters.companyId, companies.id))
       .where(eq(recruiters.authUserId, user.id))
       .limit(1);
 
     if (!recruiter) {
-      res.status(403).json({
-        success: false,
+      sendError(res, {
+        statusCode: HTTP_STATUS.FORBIDDEN,
         message: "Recruiter access is not permitted",
         code: "FORBIDDEN",
       });

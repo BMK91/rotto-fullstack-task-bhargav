@@ -1,5 +1,8 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
+import { HTTP_STATUS } from "@/constants/http-status.js";
+import { sendError } from "@/utils/send-error.js";
+import { sendSuccess } from "@/utils/send-success.js";
 import { AuthServiceError, login } from "./auth.service.js";
 
 export async function loginController(
@@ -19,8 +22,8 @@ export async function loginController(
       typeof password !== "string" ||
       !password
     ) {
-      res.status(400).json({
-        success: false,
+      sendError(res, {
+        statusCode: HTTP_STATUS.BAD_REQUEST,
         message: "Valid email and password are required",
         code: "VALIDATION_ERROR",
       });
@@ -29,16 +32,16 @@ export async function loginController(
 
     const result = await login({ email, password });
 
-    res.status(200).json({
-      success: true,
+    sendSuccess(res, {
+      statusCode: HTTP_STATUS.OK,
       message: "Login successful",
       data: result,
     });
   } catch (error) {
     if (error instanceof AuthServiceError) {
       if (error.code === "INVALID_CREDENTIALS") {
-        res.status(401).json({
-          success: false,
+        sendError(res, {
+          statusCode: HTTP_STATUS.UNAUTHORIZED,
           message: "Invalid email or password",
           code: "INVALID_CREDENTIALS",
         });
@@ -46,8 +49,8 @@ export async function loginController(
       }
 
       if (error.code === "RECRUITER_NOT_FOUND") {
-        res.status(403).json({
-          success: false,
+        sendError(res, {
+          statusCode: HTTP_STATUS.FORBIDDEN,
           message: "Recruiter access is not permitted",
           code: "FORBIDDEN",
         });
@@ -57,4 +60,31 @@ export async function loginController(
 
     next(error);
   }
+}
+
+export function getMeController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  if (!req.recruiter) {
+    sendError(res, {
+      statusCode: HTTP_STATUS.UNAUTHORIZED,
+      message: "Authentication required",
+      code: "UNAUTHORIZED",
+    });
+
+    return;
+  }
+
+  sendSuccess(res, {
+    statusCode: HTTP_STATUS.OK,
+    message: "Recruiter fetched successfully",
+    data: {
+      id: req.recruiter.id,
+      email: req.recruiter.email,
+      companyId: req.recruiter.companyId,
+      companyName: req.recruiter.companyName,
+    },
+  });
 }

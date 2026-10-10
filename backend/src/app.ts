@@ -4,6 +4,7 @@ import express from "express";
 
 import { env } from "./config/env.js";
 import { db } from "./db/client.js";
+import { errorHandler, notFoundHandler } from "./middleware/error-handler.js";
 import routes from "./routes/index.js";
 
 const app = express();
@@ -15,7 +16,7 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 
 app.use(env.API_PREFIX, routes);
 
@@ -43,5 +44,9 @@ app.get("/health/db", async (_req, res) => {
     });
   }
 });
+
+// Must be registered after all routes.
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

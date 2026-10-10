@@ -13,6 +13,7 @@ const loginResponseSchema = z.object({
       id: z.string().uuid(),
       email: z.string().email(),
       companyId: z.string().uuid(),
+      companyName: z.string().min(1),
     }),
   }),
 });
@@ -99,6 +100,11 @@ export async function POST(request: Request) {
   // Keep the refresh token inaccessible to client-side JavaScript.
   response.cookies.set("rotto_refresh_token", refreshToken, {
     ...cookieOptions,
+  });
+
+  response.cookies.set("rotto_recruiter", JSON.stringify(recruiter), {
+    ...cookieOptions,
+    maxAge: expiresIn,
   });
 
   return response;

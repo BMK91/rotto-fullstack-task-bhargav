@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db/client.js";
-import { recruiters } from "@/db/schema/index.js";
+import { companies, recruiters } from "@/db/schema/index.js";
 import { createSupabaseAuthClient } from "@/lib/auth.js";
 
 export interface LoginInput {
@@ -36,8 +36,10 @@ export async function login(input: LoginInput) {
       authUserId: recruiters.authUserId,
       email: recruiters.email,
       companyId: recruiters.companyId,
+      companyName: companies.name,
     })
     .from(recruiters)
+    .innerJoin(companies, eq(recruiters.companyId, companies.id))
     .where(eq(recruiters.authUserId, data.user.id))
     .limit(1);
 
@@ -58,6 +60,7 @@ export async function login(input: LoginInput) {
       id: recruiter.id,
       email: recruiter.email,
       companyId: recruiter.companyId,
+      companyName: recruiter.companyName,
     },
   };
 }

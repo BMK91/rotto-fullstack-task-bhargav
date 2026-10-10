@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { ChevronDown, LogOut, Menu, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { LogOut, Menu, UserRound } from "lucide-react";
+import { useState } from "react";
 
 import { ThemeSelector } from "@/components/layout/theme-selector";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/lib/toast";
 
-export function AppHeader() {
+interface AppHeaderProps {
+  email: string;
+  companyName: string;
+}
+
+export function AppHeader({ email, companyName }: AppHeaderProps) {
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -78,29 +83,18 @@ export function AppHeader() {
             </span>
 
             <span className="hidden min-w-0 text-left sm:block">
-              <span className="block max-w-44 truncate text-sm font-medium">
-                Recruiter
+              <span className="block max-w-52 truncate text-sm font-medium">
+                {email || "Recruiter"}
               </span>
-              <span className="block max-w-44 truncate text-xs text-muted-foreground">
-                Signed in
+              <span className="block max-w-52 truncate text-xs text-muted-foreground">
+                {companyName ? `(${companyName})` : "Company"}
               </span>
             </span>
+
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
-
-              <DropdownMenuSeparator />
-
-              <div className="px-2 py-2">
-                <p className="text-sm font-medium">Recruiter</p>
-                <p className="text-xs text-muted-foreground">Account details</p>
-              </div>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
             <DropdownMenuGroup>
               <DropdownMenuLabel>Theme</DropdownMenuLabel>
 

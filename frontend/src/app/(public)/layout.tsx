@@ -1,4 +1,5 @@
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -8,15 +9,15 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({
   children,
-}: Readonly<PublicLayoutProps>) {
+}: Readonly<{ children: ReactNode }>) {
   return (
-    <Suspense fallback={<PublicLayoutFallback />}>
-      <PublicContent>{children}</PublicContent>
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <PublicLayoutContent>{children}</PublicLayoutContent>
     </Suspense>
   );
 }
 
-async function PublicContent({ children }: Readonly<PublicLayoutProps>) {
+async function PublicLayoutContent({ children }: Readonly<PublicLayoutProps>) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("rotto_access_token");
 
@@ -24,13 +25,9 @@ async function PublicContent({ children }: Readonly<PublicLayoutProps>) {
     redirect("/dashboard");
   }
 
-  return <>{children}</>;
-}
-
-function PublicLayoutFallback() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="h-80 w-full max-w-md animate-pulse rounded-xl bg-muted" />
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+      {children}
     </main>
   );
 }

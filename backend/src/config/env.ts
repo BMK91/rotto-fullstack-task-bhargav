@@ -16,9 +16,15 @@ const envSchema = z.object({
     .string()
     .min(32, "JWT_SECRET must contain at least 32 characters"),
 
-  LLM_API_KEY: z.string().optional(),
+  LLM_API_URL: z
+    .string()
+    .url("LLM_API_URL must be a valid URL")
+    .optional()
+    .or(z.literal("")),
 
-  LLM_MODEL: z.string().optional(),
+  LLM_API_KEY: z.string().min(1).optional(),
+
+  LLM_MODEL: z.string().min(1).optional(),
 
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
 

@@ -24,13 +24,6 @@ export function LoginFormContainer() {
     try {
       const auth = await authService.login(values);
 
-      // Use your existing authentication storage mechanism here.
-      // Do not put long-lived secrets in localStorage.
-      // Prefer an HttpOnly cookie managed by the backend when supported.
-
-      // Do not log tokens or credentials.
-      // Connect auth to your existing session/storage implementation.
-
       toast.success("Logged in successfully.");
       router.replace("/dashboard");
       router.refresh();

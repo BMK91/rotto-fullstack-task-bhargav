@@ -193,7 +193,7 @@ export async function searchCandidates(filters: SearchFilters, page: number) {
   const offset = (page - 1) * SEARCH_PAGE_SIZE;
   const [items, countRows] = await Promise.all([
     db
-      .select({ id: candidates.id })
+      .select(candidateColumns)
       .from(candidates)
       .where(whereClause)
       .orderBy(...ordering)

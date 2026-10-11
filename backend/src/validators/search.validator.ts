@@ -25,6 +25,11 @@ export const searchFiltersSchema = z
 
     maxYearsExperience: z.number().int().min(0).max(60).optional(),
 
+    companyType: z
+      .array(z.enum(["startup", "enterprise"]))
+      .max(2)
+      .default([]),
+
     location: z
       .object({
         city: z.string().trim().min(1).max(100).optional(),
@@ -54,6 +59,8 @@ export const searchPaginationSchema = z
     page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   })
   .strict();
+
+export const searchIdSchema = z.string().uuid();
 
 export const SEARCH_PAGE_SIZE = 20;
 

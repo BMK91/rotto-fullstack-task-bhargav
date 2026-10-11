@@ -1,15 +1,18 @@
 import {
   and,
   arrayOverlaps,
+  asc,
   count,
+  desc,
   eq,
   exists,
   gte,
   ilike,
+  inArray,
   lte,
   or,
   sql,
-  type SQL
+  type SQL,
 } from "drizzle-orm";
 
 import { db } from "@/db/client.js";
@@ -17,6 +20,24 @@ import { candidateExperiences, candidates } from "@/db/schema/index.js";
 import type { SearchFilters } from "@/validators/search.validator.js";
 
 export const SEARCH_PAGE_SIZE = 20;
+
+const candidateColumns = {
+  id: candidates.id,
+  fullName: candidates.fullName,
+  avatarUrl: candidates.avatarUrl,
+  headline: candidates.headline,
+  currentTitle: candidates.currentTitle,
+  currentCompany: candidates.currentCompany,
+  currentCompanyLogoUrl: candidates.currentCompanyLogoUrl,
+  role: candidates.role,
+  seniority: candidates.seniority,
+  yearsExperience: candidates.yearsExperience,
+  locationCity: candidates.locationCity,
+  locationState: candidates.locationState,
+  locationCountry: candidates.locationCountry,
+  openToWork: candidates.openToWork,
+  skills: candidates.skills,
+};
 
 function escapeLike(value: string): string {
   return value.replace(/[\\%_]/g, "\\$&");
@@ -26,7 +47,7 @@ function containsPattern(value: string): string {
   return `%${escapeLike(value)}%`;
 }
 
-export async function searchCandidates(filters: SearchFilters, page: number) {
+function buildCandidateQuery(filters: SearchFilters) {
   const conditions: SQL[] = [];
 
   if (filters.skills.length > 0) {
@@ -36,7 +57,6 @@ export async function searchCandidates(filters: SearchFilters, page: number) {
   if (filters.roles.length > 0) {
     const roleConditions = filters.roles.flatMap((role) => {
       const pattern = containsPattern(role);
-
       return [
         ilike(candidates.role, pattern),
         ilike(candidates.currentTitle, pattern),
@@ -80,6 +100,22 @@ export async function searchCandidates(filters: SearchFilters, page: number) {
     );
   }
 
+  if (filters.companyType.length > 0) {
+    conditions.push(
+      exists(
+        db
+          .select({ one: sql<number>`1` })
+          .from(candidateExperiences)
+          .where(
+            and(
+              eq(candidateExperiences.candidateId, candidates.id),
+              inArray(candidateExperiences.companyType, filters.companyType),
+            ),
+          ),
+      ),
+    );
+  }
+
   if (filters.location?.city) {
     conditions.push(
       ilike(candidates.locationCity, containsPattern(filters.location.city)),
@@ -105,8 +141,6 @@ export async function searchCandidates(filters: SearchFilters, page: number) {
     conditions.push(eq(candidates.openToWork, filters.openToWork));
   }
 
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
   const skillRank =
     filters.skills.length > 0
       ? sql<number>`CASE WHEN ${arrayOverlaps(
@@ -124,36 +158,45 @@ export async function searchCandidates(filters: SearchFilters, page: number) {
         )!} THEN 1 ELSE 0 END`
       : sql<number>`0`;
 
-  const offset = (page - 1) * SEARCH_PAGE_SIZE;
+  return {
+    whereClause: conditions.length > 0 ? and(...conditions) : undefined,
+    ordering: [
+      desc(skillRank),
+      desc(roleRank),
+      desc(candidates.yearsExperience),
+      desc(candidates.updatedAt),
+      asc(candidates.id),
+    ] as const,
+  };
+}
 
+export async function getCandidatesByIds(ids: string[]) {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const rows = await db
+    .select(candidateColumns)
+    .from(candidates)
+    .where(inArray(candidates.id, ids));
+  const byId = new Map(rows.map((row) => [row.id, row]));
+
+  return ids.flatMap((id) => {
+    const candidate = byId.get(id);
+    return candidate ? [candidate] : [];
+  });
+}
+
+export async function searchCandidates(filters: SearchFilters, page: number) {
+  const { whereClause, ordering } = buildCandidateQuery(filters);
+
+  const offset = (page - 1) * SEARCH_PAGE_SIZE;
   const [items, countRows] = await Promise.all([
     db
-      .select({
-        id: candidates.id,
-        fullName: candidates.fullName,
-        avatarUrl: candidates.avatarUrl,
-        headline: candidates.headline,
-        currentTitle: candidates.currentTitle,
-        currentCompany: candidates.currentCompany,
-        currentCompanyLogoUrl: candidates.currentCompanyLogoUrl,
-        role: candidates.role,
-        seniority: candidates.seniority,
-        yearsExperience: candidates.yearsExperience,
-        locationCity: candidates.locationCity,
-        locationState: candidates.locationState,
-        locationCountry: candidates.locationCountry,
-        openToWork: candidates.openToWork,
-        skills: candidates.skills,
-      })
+      .select({ id: candidates.id })
       .from(candidates)
       .where(whereClause)
-      // .orderBy(
-      //   desc(skillRank),
-      //   desc(roleRank),
-      //   desc(candidates.yearsExperience),
-      //   desc(candidates.updatedAt),
-      //   asc(candidates.id),
-      // )
+      .orderBy(...ordering)
       .limit(SEARCH_PAGE_SIZE)
       .offset(offset),
 
@@ -163,8 +206,12 @@ export async function searchCandidates(filters: SearchFilters, page: number) {
   const total = countRows[0]?.total ?? 0;
   const totalPages = Math.ceil(total / SEARCH_PAGE_SIZE);
 
+  const resultIds = items.map((row) => row.id);
+  // const firstPageIds = resultIds.slice(0, SEARCH_PAGE_SIZE);
+
   return {
     items,
+    resultIds,
     pagination: {
       page,
       pageSize: SEARCH_PAGE_SIZE,

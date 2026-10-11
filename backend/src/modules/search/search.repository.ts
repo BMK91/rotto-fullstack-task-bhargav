@@ -141,32 +141,45 @@ function buildCandidateQuery(filters: SearchFilters) {
     conditions.push(eq(candidates.openToWork, filters.openToWork));
   }
 
-  const skillRank =
-    filters.skills.length > 0
-      ? sql<number>`CASE WHEN ${arrayOverlaps(
-          candidates.skills,
-          filters.skills,
-        )} THEN 1 ELSE 0 END`
-      : sql<number>`0`;
+  const ordering: SQL[] = [];
 
-  const roleRank =
-    filters.roles.length > 0
-      ? sql<number>`CASE WHEN ${or(
+  if (filters.skills.length > 0) {
+    const skillRank = sql<number>`
+      CASE
+        WHEN ${arrayOverlaps(candidates.skills, filters.skills)}
+        THEN 1
+        ELSE 0
+      END
+    `;
+
+    ordering.push(desc(skillRank));
+  }
+
+  if (filters.roles.length > 0) {
+    const roleRank = sql<number>`
+      CASE
+        WHEN ${or(
           ...filters.roles.map((role) =>
             ilike(candidates.role, containsPattern(role)),
           ),
-        )!} THEN 1 ELSE 0 END`
-      : sql<number>`0`;
+        )!}
+        THEN 1
+        ELSE 0
+      END
+    `;
+
+    ordering.push(desc(roleRank));
+  }
+
+  ordering.push(
+    desc(candidates.yearsExperience),
+    desc(candidates.updatedAt),
+    asc(candidates.id),
+  );
 
   return {
     whereClause: conditions.length > 0 ? and(...conditions) : undefined,
-    ordering: [
-      desc(skillRank),
-      desc(roleRank),
-      desc(candidates.yearsExperience),
-      desc(candidates.updatedAt),
-      asc(candidates.id),
-    ] as const,
+    ordering,
   };
 }
 

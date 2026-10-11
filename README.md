@@ -2,6 +2,8 @@
 
 Rotto Recruiter is a recruiter workspace for finding candidates from a natural-language brief. The frontend sends a brief to an authenticated API; the backend asks a configured Gemini-compatible LLM to extract supported criteria, filters candidate records in PostgreSQL, ranks matches, and stores a search run so its results can be paged.
 
+**Application overview:** [Watch the quick Loom walkthrough](https://www.loom.com/share/065f4d8e6fcc4e53ac69c5a04e3986ad).
+
 ## Contents
 
 - [What is implemented](#what-is-implemented)

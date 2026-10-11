@@ -1,0 +1,185 @@
+{
+  "info": {
+    "_postman_id": "4030683c-4c0f-45a1-8064-3f15c3e3ded1",
+    "name": "Rotto Recruiter App",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52338361",
+    "_collection_link": "https://go.postman.co/collection/52338361-4030683c-4c0f-45a1-8064-3f15c3e3ded1?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"recruiter@acme.test\",\r\n  \"password\": \"rotto-assessment\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI4MTI2OWYxLTIxZDgtNGYyZS1iNzE5LWMyMjQwYTg0MGQ5MCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjU0MzIxL2F1dGgvdjEiLCJzdWIiOiI1NmYwNGQzNS01NmE1LTQxZDEtOWYzYy02MjM5MDE4ZmVjODAiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzkxNjI5ODEyLCJpYXQiOjE3OTE2MjYyMTIsImVtYWlsIjoicmVjcnVpdGVyQGFjbWUudGVzdCIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzkxNjI2MjEyfV0sInNlc3Npb25faWQiOiI3NjRjZmQ4Yi0zMTMzLTRlNzQtOTAxNC1hYjEzZjVlZTYyY2UiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.KnChE21EjwG_PIV9TsjlTAeMNAoz6lm8asPGLtPZMQRRmhHRSI922gz329MwVuy8joGRlzXHZ-z3kU7Zd61GHw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Candidate Brief",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI4MTI2OWYxLTIxZDgtNGYyZS1iNzE5LWMyMjQwYTg0MGQ5MCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjU0MzIxL2F1dGgvdjEiLCJzdWIiOiI1NmYwNGQzNS01NmE1LTQxZDEtOWYzYy02MjM5MDE4ZmVjODAiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzkxNzE1MTcxLCJpYXQiOjE3OTE3MTE1NzEsImVtYWlsIjoicmVjcnVpdGVyQGFjbWUudGVzdCIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzkxNzExNTcxfV0sInNlc3Npb25faWQiOiIwNTM3NmFjZC01YjAzLTRiM2EtYThmOS0wMWZkNTVlZWM3ZWYiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.AzeNstjtlHQDtDzj3zIrb0AifpOMgwgJwwfqHGVYlF4UkpfRYjnnv_1k-6y8sAVsDb7iD-RHyhnBhyUyxYk_Zw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  // \"brief\": \"Senior React developer with 5 years of experience in India\"\r\n  // \"brief\": \"React\"\r\n  \"brief\": \"senior React engineers in New York who have worked at a startup\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/search",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "search"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Page",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI4MTI2OWYxLTIxZDgtNGYyZS1iNzE5LWMyMjQwYTg0MGQ5MCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjU0MzIxL2F1dGgvdjEiLCJzdWIiOiI1NmYwNGQzNS01NmE1LTQxZDEtOWYzYy02MjM5MDE4ZmVjODAiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzkxNzEzMzM5LCJpYXQiOjE3OTE3MDk3MzksImVtYWlsIjoicmVjcnVpdGVyQGFjbWUudGVzdCIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzkxNzA5NzM5fV0sInNlc3Npb25faWQiOiJlM2Y0YjBkOS0zNTE5LTQxNGUtYmQyZC1jMmMwZjk3ZGZkMDgiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.zB9czaFPr4RP5qvTgM0WhZPQQiuE0UNJ4DO306k11S4avb9u8O9K3GSgiZ87Iva0pSMBBAiKwzP2vyTyNXIjIA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/search/aa6c3748-8191-4fe9-9c60-47da4283f5a9",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "search",
+                "aa6c3748-8191-4fe9-9c60-47da4283f5a9"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{root_url}}/health",
+          "host": [
+            "{{root_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check DB",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{root_url}}/health/db",
+          "host": [
+            "{{root_url}}"
+          ],
+          "path": [
+            "health",
+            "db"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "root_url",
+      "value": ""
+    }
+  ]
+}

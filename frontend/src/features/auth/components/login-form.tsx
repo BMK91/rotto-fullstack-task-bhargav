@@ -30,8 +30,8 @@ export function LoginForm({
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "recruiter@acme.test",
-      password: "rotto-assessment",
+      email: "",
+      password: "",
     },
     mode: "onBlur",
   });

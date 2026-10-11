@@ -47,7 +47,7 @@ Rules:
 - Never generate SQL or return candidate records.
 `;
 
-const FREE_SEARCH_LIMIT = 100;
+const FREE_SEARCH_LIMIT = 1;
 
 type CompanyPlan = "free" | "paid";
 

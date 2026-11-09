@@ -13,7 +13,8 @@
     "db:seed": "tsx src/db/seed/seed.ts",
     "db:seed:auth": "tsx src/db/seed/seed-auth-runner.ts",
     "db:seed:candidates": "tsx src/db/seed/seed-candidates-runner.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsx src/validators/search.validators.test.ts && tsx src/modules/shortlist/shortlist.test.ts",
+    "test:shortlist": "tsx src/modules/shortlist/shortlist.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",

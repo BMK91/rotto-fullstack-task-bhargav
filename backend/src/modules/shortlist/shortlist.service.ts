@@ -7,6 +7,7 @@ import {
   deleteShortlistRecord,
   findCandidateById,
   findShortlistByIdAndCompany,
+  findShortlistByNameAndCompany,
   findShortlistCandidateAssociation,
   getCompanyShortlists,
   getShortlistCandidatesPaginated,
@@ -23,13 +24,41 @@ import type {
 } from "./shortlist.types.js";
 import { SHORTLIST_PAGE_SIZE } from "./shortlist.validator.js";
 
+export function capitalizeWords(input: string): string {
+  return input
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .map((word) => {
+      if (!word) return "";
+      if (word.length <= 3 && word === word.toUpperCase()) {
+        return word;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
 export async function createShortlist(
   input: CreateShortlistInput,
 ): Promise<Shortlist> {
-  const trimmedName = input.name.trim();
+  const formattedName = capitalizeWords(input.name);
+
+  const existing = await findShortlistByNameAndCompany(
+    formattedName,
+    input.companyId,
+  );
+
+  if (existing) {
+    throw new ApiError(
+      HTTP_STATUS.CONFLICT,
+      "DUPLICATE_SHORTLIST",
+      `A shortlist with the name "${existing.name}" already exists.`,
+    );
+  }
 
   return await createShortlistRecord({
-    name: trimmedName,
+    name: formattedName,
     companyId: input.companyId,
     recruiterId: input.recruiterId,
   });
@@ -37,8 +66,9 @@ export async function createShortlist(
 
 export async function getShortlists(
   companyId: string,
+  candidateId?: string,
 ): Promise<ShortlistSummary[]> {
-  return await getCompanyShortlists(companyId);
+  return await getCompanyShortlists(companyId, candidateId);
 }
 
 export async function getShortlistDetails(

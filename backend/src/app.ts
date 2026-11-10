@@ -20,6 +20,10 @@ app.use(express.json({ limit: "1mb" }));
 
 app.use(env.API_PREFIX, routes);
 
+if (env.API_PREFIX !== "/api") {
+  app.use("/api", routes);
+}
+
 app.get("/health", (_req, res) => {
   res.status(200).json({
     success: true,

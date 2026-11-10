@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Bookmark, Search } from "lucide-react";
+import { ArrowUpRight, Bookmark, Search, Users } from "lucide-react";
 
 import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
 
@@ -37,12 +37,19 @@ export default function DashboardPage() {
           </p>
         </Link>
 
-        <div className="rounded-xl border bg-card p-5">
-          <h2 className="font-medium">Shortlists</h2>
+        <Link
+          href="/shortlists"
+          className="group rounded-xl border bg-card p-5 transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <Users className="mt-0.5 size-5 text-primary" aria-hidden="true" />
+            <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+          </div>
+          <h2 className="mt-4 font-medium">Shortlists</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Review your shortlisted candidates.
           </p>
-        </div>
+        </Link>
 
         <Link
           href="/saved-searches"
@@ -58,6 +65,6 @@ export default function DashboardPage() {
           </p>
         </Link>
       </div>
-    </section>
+    </section >
   );
 }

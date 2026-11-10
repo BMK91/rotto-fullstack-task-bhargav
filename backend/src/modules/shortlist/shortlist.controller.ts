@@ -63,7 +63,11 @@ export async function getShortlistsController(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const list = await getShortlists(req.recruiter!.companyId);
+    const candidateId =
+      typeof req.query.candidateId === "string"
+        ? req.query.candidateId
+        : undefined;
+    const list = await getShortlists(req.recruiter!.companyId, candidateId);
 
     sendSuccess(res, {
       statusCode: HTTP_STATUS.OK,

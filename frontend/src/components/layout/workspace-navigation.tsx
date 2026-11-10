@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Bookmark, LayoutDashboard, Search } from "lucide-react";
+import { Bookmark, LayoutDashboard, Search, Users } from "lucide-react";
 
-type WorkspaceSection = "dashboard" | "candidate-search" | "saved-searches";
+type WorkspaceSection = "dashboard" | "candidate-search" | "shortlists" | "saved-searches";
 
 interface WorkspaceNavigationProps {
   active: WorkspaceSection;
@@ -15,6 +15,7 @@ const navigationItems: Array<{
 }> = [
   { id: "dashboard", href: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { id: "candidate-search", href: "/candidate-search", label: "Candidate Search", Icon: Search },
+  { id: "shortlists", href: "/shortlists", label: "Shortlists", Icon: Users },
   { id: "saved-searches", href: "/saved-searches", label: "Saved Searches", Icon: Bookmark },
 ];
 
@@ -29,7 +30,7 @@ export function WorkspaceNavigation({ active }: WorkspaceNavigationProps) {
               key={id}
               href={href}
               aria-current={isActive ? "page" : undefined}
-              className={`inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              className={`inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 isActive
                   ? "border-primary text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"

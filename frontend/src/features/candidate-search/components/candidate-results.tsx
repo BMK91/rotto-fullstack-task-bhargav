@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { Candidate } from "@/features/candidate-search/schemas/search.schema";
+import { SaveToShortlistButton } from "@/features/shortlists/components/save-to-shortlist-button";
 
 interface CandidateResultsProps {
   candidates: Candidate[];
@@ -34,15 +35,15 @@ function CandidateResultItem({ candidate }: { candidate: Candidate }) {
   const name = candidate.fullName?.trim() || "Candidate profile";
 
   return (
-    <article className="overflow-hidden rounded-xl border bg-card">
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-controls={detailsId}
-        onClick={() => setExpanded((value) => !value)}
-        className="flex min-h-24 w-full items-start justify-between gap-4 p-4 text-left transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:items-center sm:px-5"
-      >
-        <span className="min-w-0 flex-1">
+    <article className="rounded-xl border bg-card relative has-[[data-state=open]]:z-30">
+      <div className="flex min-h-24 w-full items-start justify-between gap-4 p-4 transition-colors hover:bg-muted/30 sm:items-center sm:px-5">
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-controls={detailsId}
+          onClick={() => setExpanded((value) => !value)}
+          className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg cursor-pointer"
+        >
           <span className="block truncate font-semibold">{name}</span>
           {currentRole && (
             <span className="mt-1 flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
@@ -75,14 +76,25 @@ function CandidateResultItem({ candidate }: { candidate: Candidate }) {
               )}
             </span>
           )}
-        </span>
-        <span className="mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground" aria-hidden="true">
-          {expanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-        </span>
-      </button>
+        </button>
+
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
+          <SaveToShortlistButton candidateId={candidate.id} candidateName={name} />
+          <button
+            type="button"
+            aria-expanded={expanded}
+            aria-controls={detailsId}
+            onClick={() => setExpanded((value) => !value)}
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+            aria-label={expanded ? "Collapse details" : "Expand details"}
+          >
+            {expanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+          </button>
+        </div>
+      </div>
 
       {expanded && (
-        <div id={detailsId} className="space-y-4 border-t bg-muted/20 px-4 py-4 sm:px-5">
+        <div id={detailsId} className="space-y-4 border-t bg-muted/20 px-4 py-4 sm:px-5 rounded-b-xl">
           {candidate.headline && (
             <p className="text-sm leading-6 text-foreground">{candidate.headline}</p>
           )}

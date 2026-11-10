@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 
 import { db } from "@/db/client.js";
 import {
@@ -37,6 +37,7 @@ export async function createShortlistRecord(data: {
 
 export async function getCompanyShortlists(
   companyId: string,
+  candidateId?: string,
 ): Promise<ShortlistSummary[]> {
   const rows = await db
     .select({
@@ -45,6 +46,9 @@ export async function getCompanyShortlists(
       candidateCount: sql<number>`cast(count(${shortlistCandidates.id}) as integer)`,
       createdAt: shortlists.createdAt,
       updatedAt: shortlists.updatedAt,
+      hasCandidate: candidateId
+        ? sql<boolean>`coalesce(bool_or(${shortlistCandidates.candidateId} = ${candidateId}), false)`
+        : sql<boolean>`false`,
     })
     .from(shortlists)
     .leftJoin(
@@ -53,9 +57,34 @@ export async function getCompanyShortlists(
     )
     .where(eq(shortlists.companyId, companyId))
     .groupBy(shortlists.id)
-    .orderBy(desc(shortlists.createdAt));
+    .orderBy(asc(sql`lower(${shortlists.name})`));
 
-  return rows;
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    candidateCount: r.candidateCount,
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+    ...(candidateId ? { hasCandidate: Boolean(r.hasCandidate) } : {}),
+  }));
+}
+
+export async function findShortlistByNameAndCompany(
+  name: string,
+  companyId: string,
+): Promise<Shortlist | null> {
+  const [record] = await db
+    .select()
+    .from(shortlists)
+    .where(
+      and(
+        sql`lower(${shortlists.name}) = lower(${name.trim()})`,
+        eq(shortlists.companyId, companyId),
+      ),
+    )
+    .limit(1);
+
+  return record ?? null;
 }
 
 export async function findShortlistByIdAndCompany(

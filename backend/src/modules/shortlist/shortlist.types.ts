@@ -13,6 +13,7 @@ export interface ShortlistSummary {
   candidateCount: number;
   createdAt: Date;
   updatedAt: Date;
+  hasCandidate?: boolean;
 }
 
 export interface ShortlistCandidateItem {

@@ -209,6 +209,28 @@ async function runTests() {
       acmeShortlistId = res.body.data.id;
     }
 
+    // Capitalize words test
+    {
+      const res = await request("/api/v1/shortlists", {
+        method: "POST",
+        token: acmeToken,
+        body: { name: "junior python engineers" },
+      });
+      assert(res.status === 201, "Create lowercase shortlist name returns 201");
+      assert(res.body.data.name === "Junior Python Engineers", "Shortlist name is capitalized word by word");
+    }
+
+    // Case-insensitive duplicate rejection test
+    {
+      const res = await request("/api/v1/shortlists", {
+        method: "POST",
+        token: acmeToken,
+        body: { name: "JUNIOR PYTHON ENGINEERS" },
+      });
+      assert(res.status === 409, "Reject duplicate shortlist name with different casing (409)");
+      assert(res.body.code === "DUPLICATE_SHORTLIST", "Error code is DUPLICATE_SHORTLIST");
+    }
+
     // Test alias prefix /api/shortlists works too!
     {
       const res = await request("/api/shortlists", {
@@ -217,8 +239,10 @@ async function runTests() {
       });
       assert(res.status === 200, "GET /api/shortlists (without /v1) works cleanly");
       assert(Array.isArray(res.body.data), "Returns array of shortlists");
-      assert(res.body.data.length === 1, "Returns 1 shortlist");
+      assert(res.body.data.length === 2, "Returns 2 shortlists");
       assert(res.body.data[0].candidateCount === 0, "Initial candidateCount is 0");
+      assert(res.body.data[0].name === "Junior Python Engineers", "First shortlist sorted alphabetically by name");
+      assert(res.body.data[1].name === "Senior Backend Developers", "Second shortlist sorted alphabetically by name");
     }
 
     {
@@ -317,7 +341,26 @@ async function runTests() {
         token: acmeToken,
       });
       assert(res.status === 200, "Get all shortlists returns 200");
-      assert(res.body.data[0].candidateCount === 2, "Candidate count in summary aggregation is 2");
+      const acmeShortlist = res.body.data.find((s: any) => s.id === acmeShortlistId);
+      assert(acmeShortlist?.candidateCount === 2, "Candidate count in summary aggregation is 2");
+    }
+
+    // Test candidateId filter for hasCandidate boolean
+    {
+      const res = await request(`/api/v1/shortlists?candidateId=cand_0001`, {
+        method: "GET",
+        token: acmeToken,
+      });
+      assert(res.status === 200, "Get shortlists with candidateId query returns 200");
+      const matched = res.body.data.find((s: any) => s.id === acmeShortlistId);
+      assert(matched?.hasCandidate === true, "Shortlist correctly reports hasCandidate: true");
+
+      const res2 = await request(`/api/v1/shortlists?candidateId=cand_9999`, {
+        method: "GET",
+        token: acmeToken,
+      });
+      const unmatched = res2.body.data.find((s: any) => s.id === acmeShortlistId);
+      assert(unmatched?.hasCandidate === false, "Shortlist correctly reports hasCandidate: false when candidate not in shortlist");
     }
 
     // Remove candidate

@@ -84,7 +84,7 @@ export function CandidateSearchWorkspace() {
         const seen = new Set(current.map((candidate) => candidate.id));
         return [...current, ...response.results.filter((candidate) => !seen.has(candidate.id))];
       });
-      setTotal(response.total);
+      setTotal(response.total ?? response.pagination.total);
       setPagination(response.pagination);
       currentPagination.current = response.pagination;
       nextPage.current = page + 1;
@@ -135,7 +135,7 @@ export function CandidateSearchWorkspace() {
       currentPagination.current = response.pagination;
       setSearchId(response.search_id);
       setFilters(response.filters);
-      setTotal(response.total);
+      setTotal(response.total ?? response.pagination.total);
       setPagination(response.pagination);
       setSearchesRemaining(response.searches_remaining);
       setCandidates(response.items);

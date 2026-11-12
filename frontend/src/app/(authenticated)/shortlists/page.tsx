@@ -16,7 +16,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
 import { CreateShortlistDialog } from "@/features/shortlists/components/create-shortlist-dialog";
 import {
   shortlistService,
@@ -105,8 +104,6 @@ export default function ShortlistsPage() {
 
   return (
     <section className="space-y-6">
-      <WorkspaceNavigation active="shortlists" />
-
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

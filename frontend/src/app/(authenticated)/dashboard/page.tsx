@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Bookmark, Search, Users } from "lucide-react";
 
-import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
-
 export const metadata: Metadata = {
   title: "Dashboard | Rotto Recruiter",
   description: "Manage candidate searches and shortlists.",
@@ -12,7 +10,6 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <section className="space-y-6">
-      <WorkspaceNavigation active="dashboard" />
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
           Dashboard

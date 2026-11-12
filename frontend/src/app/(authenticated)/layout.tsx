@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 
 import { AppHeader } from "@/components/layout/app-header";
+import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;
@@ -56,12 +57,15 @@ async function AuthenticatedContent({
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader
-        email={recruiter?.email ?? ""}
-        companyName={recruiter?.companyName ?? ""}
-      />
+      <div className="fixed inset-x-0 top-0 z-40 bg-background/95 backdrop-blur">
+        <AppHeader
+          email={recruiter?.email ?? ""}
+          companyName={recruiter?.companyName ?? ""}
+        />
+        <WorkspaceNavigation />
+      </div>
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 pb-6 pt-[calc(4rem+2.75rem+2px+1.5rem)] sm:px-6 lg:px-8">
         {children}
       </main>
     </div>
@@ -71,8 +75,11 @@ async function AuthenticatedContent({
 function AuthenticatedLayoutFallback() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="h-16 border-b" />
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="fixed inset-x-0 top-0 z-40 bg-background/95 backdrop-blur">
+        <header className="h-16 border-b" />
+        <div className="h-11 border-b" />
+      </div>
+      <main className="mx-auto w-full max-w-7xl px-4 pb-6 pt-[calc(4rem+2.75rem+2px+1.5rem)] sm:px-6 lg:px-8">
         <div className="h-8 w-48 animate-pulse rounded bg-muted" />
       </main>
     </div>

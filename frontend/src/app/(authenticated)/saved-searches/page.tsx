@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Bookmark, CircleHelp } from "lucide-react";
 
-import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
-
 export const metadata: Metadata = {
   title: "Saved Searches | Rotto Recruiter",
   description: "View saved candidate searches.",
@@ -12,7 +10,6 @@ export const metadata: Metadata = {
 export default function SavedSearchesPage() {
   return (
     <section className="space-y-6">
-      <WorkspaceNavigation active="saved-searches" />
       <header className="space-y-1">
         <p className="text-sm font-medium text-primary">Your workspace</p>
         <h1 className="text-2xl font-semibold tracking-tight">Saved Searches</h1>

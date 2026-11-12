@@ -20,7 +20,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
 import {
   shortlistService,
   ShortlistServiceError,
@@ -302,8 +301,6 @@ export default function ShortlistDetailPage() {
 
   return (
     <section className="space-y-6">
-      <WorkspaceNavigation active="shortlists" />
-
       {/* Back button & Title bar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

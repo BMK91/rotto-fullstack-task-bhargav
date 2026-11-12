@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { WorkspaceNavigation } from "@/components/layout/workspace-navigation";
 import { CandidateResults } from "@/features/candidate-search/components/candidate-results";
 import { SearchFiltersTabs } from "@/features/candidate-search/components/search-filters-tabs";
 import {
@@ -178,7 +177,6 @@ export function CandidateSearchWorkspace() {
 
   return (
     <section className="space-y-6">
-      <WorkspaceNavigation active="candidate-search" />
       <header className="space-y-1">
         <p className="text-sm font-medium text-primary">Candidate discovery</p>
         <h1 className="text-2xl font-semibold tracking-tight">Find your next great hire</h1>
